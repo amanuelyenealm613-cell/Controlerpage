@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management - Secure Controller</title>
+    
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- EmailJS Library -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("oMcGd9xGFpXda4ZpX");
+        })();
+    </script>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginContainer" class="auth-wrapper">
+        <h2>🏨 Hotel Management Controller</h2>
+        <p>Enter the authorized administrator email to sign in</p>
+        
+        <form onsubmit="requestOTP(event)">
+            <div class="form-group">
+                <label>Admin Email</label>
+                <input type="email" id="adminEmailInput" autocomplete="off" autocapitalize="none" required placeholder="Enter admin email...">
+            </div>
+            <button type="submit" class="btn-primary">Send OTP Code</button>
+        </form>
+    </div>
+
+    <!-- OTP VERIFICATION SCREEN -->
+    <div id="otpContainer" class="auth-wrapper hidden">
+        <h2>✉️ Email Verification (OTP)</h2>
+        <p id="otpInfoText">A 6-digit code has been sent to your email</p>
+        
+        <form onsubmit="verifyOTP(event)">
+            <div class="form-group">
+                <label>Enter 6-digit Code</label>
+                <input type="text" id="enteredOtp" autocomplete="off" maxlength="6" required placeholder="------" style="text-align: center; font-size: 20px; letter-spacing: 5px;">
+            </div>
+            <button type="submit" class="btn-primary">Verify Code</button>
+        </form>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="dashboardContainer" class="hidden">
+        <header>
+            <div class="logo">🏨 Hotel Management - Admin Dashboard</div>
+            <button class="logout-btn" onclick="logoutController()">Log Out</button>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card"><h3>Total Hotels</h3><p id="totalHotels">0</p></div>
+            <div class="stat-card"><h3>Total Users</h3><p id="totalUsers">0</p></div>
+            <div class="stat-card"><h3>Total Orders</h3><p id="totalOrders">0</p></div>
+            <div class="stat-card"><h3>Total Revenue</h3><p id="totalRevenue">0 ETB</p></div>
+        </div>
+
+        <div class="section-box" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin-bottom: 5px;">⚠️ System Reset Controller</h3>
+                <p style="font-size: 13px; color: var(--text-secondary);">Clear all customer files, orders, and total revenue completely from the database.</p>
+            </div>
+            <button class="btn-danger" onclick="clearAllDataAndRevenue()">Clear All Orders & Files</button>
+        </div>
+
+        <div class="section-box">
+            <h3>➕ Register New Hotel (With Unique ID & License)</h3>
+            <form id="addHotelForm" onsubmit="addNewHotel(event)">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Hotel Name</label>
+                        <input type="text" id="hotelName" required placeholder="e.g., Adane Hotel">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Location / Address</label>
+                        <input type="text" id="hotelLocation" required placeholder="Bole, Addis Ababa">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Hotel Main Photo (Gallery)</label>
+                        <input type="file" id="hotelImg" accept="image/*" required style="background:none; border:none; color:white; padding:0;">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Business License Document/Photo</label>
+                        <input type="file" id="licenseImg" accept="image/*" required style="background:none; border:none; color:white; padding:0;">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Renewal Proof Document/Photo</label>
+                        <input type="file" id="renewalImg" accept="image/*" required style="background:none; border:none; color:white; padding:0;">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px;">Register Hotel</button>
+            </form>
+        </div>
+
+        <div class="section-box">
+            <h3>🏨 Registered Hotels List & IDs</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Hotel ID</th><th>Hotel Name</th><th>Location</th><th>License / Renewal</th><th>Action</th></tr></thead>
+                    <tbody id="hotelsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <h3>📋 Customer Orders & File Control</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>ID</th><th>Service</th><th>Customer</th><th>Price</th><th>Fayda / Receipt Files</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody id="ordersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript File -->
+    <script src="script.js"></script>
+</body>
+</html>
